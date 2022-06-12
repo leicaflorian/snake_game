@@ -18,7 +18,7 @@
  
 <body>
   <div id="app">
-    <div class="container text-center">
+    <div class="container text-center mb-5">
       <div class="d-flex mb-3 border-bottom py-3">
         <div class="me-auto">
           Punti: <span class="points">{{points}}</span><br>
@@ -36,7 +36,7 @@
         of 250ms and for each point decreases by 2.</p>
       <p>On Micrsoft Edge this issue happens almost immediately, but on Safari always works perfectly. This could be due to the memory optimization that safari has for the M1 chips.</p>
 
-      <div class="grid-container" :class="{'playing': playing}">
+      <div class="grid-container" :class="{'playing': playing}" ref="gridContainer">
         <div class="grid-row" v-for="(row, rowIndex) in gridMatrix" :data-row="rowIndex">
           <div class="grid-cell" v-for="cell in row" :data-row="rowIndex" :data-cell="cell"
                :class="{'eaten-target': eatenTargets.includes(rowIndex + '-' + cell)}">
@@ -57,7 +57,6 @@
   </div>
 
   <script src="js/vue.js"></script>
-  <!-- <script src="js/main.js"></script> -->
 </body>
 
 </html>

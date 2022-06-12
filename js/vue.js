@@ -156,15 +156,62 @@ new Vue({
       this.nextDirection = "right";
       this.eatenTargets = [];
       this.snakeTargets = [];
-      this.playing = false
+      this.playing = false;
       this.speed = 250;
       this.points = 0;
 
       this.addRandomTargets(4);
     },
+
+    decideSnakeMovement(direction) {
+      if (
+        (this.nextDirection === "right" && direction === "left") ||
+        (this.nextDirection === "left" && direction === "right") ||
+        (this.nextDirection === "up" && direction === "down") ||
+        (this.nextDirection === "down" && direction === "up")
+      ) {
+        return;
+      }
+
+      this.nextDirection = direction;
+    },
   },
   mounted() {
     this.reset();
+
+    let touchStart = { x: 0, y: 0 };
+    let touchEnd = { x: 0, y: 0 };
+
+    this.$refs.gridContainer.addEventListener("touchstart", (e) => {
+      e.preventDefault();
+      touchStart = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    });
+    this.$refs.gridContainer.addEventListener("touchmove", (e) => {
+      e.preventDefault();
+      touchEnd = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    });
+    this.$refs.gridContainer.addEventListener("touchend", (e) => {
+      const deltaX = touchEnd.x - touchStart.x;
+      const deltaY = touchEnd.y - touchStart.y;
+      let direction;
+
+      // Check only the direction of the bigger delta
+      if (Math.abs(deltaX) > Math.abs(deltaY)) {
+        if (touchEnd.x > touchStart.x) {
+          direction = "right";
+        } else {
+          direction = "left";
+        }
+      } else {
+        if (touchEnd.y > touchStart.y) {
+          direction = "down";
+        } else {
+          direction = "up";
+        }
+      }
+
+      this.decideSnakeMovement(direction);
+    });
 
     window.addEventListener("keydown", (e) => {
       if (this.playing && e.key.startsWith("Arrow")) {
@@ -172,30 +219,24 @@ new Vue({
       } else {
         return;
       }
-
-      if (
-        (this.nextDirection === "right" && e.key === "ArrowLeft") ||
-        (this.nextDirection === "left" && e.key === "ArrowRight") ||
-        (this.nextDirection === "up" && e.key === "ArrowDown") ||
-        (this.nextDirection === "down" && e.key === "ArrowUp")
-      ) {
-        return;
-      }
+      let direction;
 
       switch (e.key) {
         case "ArrowUp":
-          this.nextDirection = "up";
+          direction = "up";
           break;
         case "ArrowDown":
-          this.nextDirection = "down";
+          direction = "down";
           break;
         case "ArrowLeft":
-          this.nextDirection = "left";
+          direction = "left";
           break;
         case "ArrowRight":
-          this.nextDirection = "right";
+          direction = "right";
           break;
       }
+
+      this.decideSnakeMovement(direction);
     });
   },
 });
