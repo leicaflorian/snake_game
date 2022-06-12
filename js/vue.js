@@ -217,7 +217,7 @@ new Vue({
       if (this.playing && e.key.startsWith("Arrow")) {
         e.preventDefault();
       } else {
-        return;
+        return; 
       }
       let direction;
 
